@@ -34,7 +34,7 @@ import {
   pickCardToPlay,
   getCardsChanceWinning,
   decideToOrderItUp,
-  getExpectedTricksWin,
+  // getExpectedTricksWin,
   decideToGoAlone,
   pickCardToDiscard,
   pickSuitForTrump,
@@ -112,10 +112,10 @@ const ComputerPlayer = ({ playerPointer }: PlayerProps) => {
   useEffect(() => {
     if (canPlay) {
       if (trick.length === 0) {
-        const leadingCardChosen = pickLeadingCard(
-          hand,
-          trump as PlayingCardSuit
-        );
+        // const leadingCardChosen = pickLeadingCard(
+        //   hand,
+        //   trump as PlayingCardSuit
+        // );
         // console.log(
         //   "Leading mode: Leading card chosen is: ",
         //   JSON.stringify(hand[leadingCardChosen])
@@ -132,11 +132,11 @@ const ComputerPlayer = ({ playerPointer }: PlayerProps) => {
         //   console.log(JSON.stringify(hand[index]))
         // );
         if (cardIndicesThatCanWin.length === 0) {
-          const throwAwayIndex = pickThrowAwayCard(
-            hand,
-            trump as PlayingCardSuit,
-            leadingSuit as PlayingCardSuit
-          );
+          // const throwAwayIndex = pickThrowAwayCard(
+          //   hand,
+          //   trump as PlayingCardSuit,
+          //   leadingSuit as PlayingCardSuit
+          // );
           // console.log(
           //   "Throwaway mode, card chosen is: ",
           //   JSON.stringify(hand[throwAwayIndex])
@@ -164,11 +164,11 @@ const ComputerPlayer = ({ playerPointer }: PlayerProps) => {
   useEffect(() => {
     if (canBid) {
       hand.map((card) => {
-        const cardChanceWinning = getCardsChanceWinning(
-          card,
-          hand,
-          talon[0].suit
-        );
+        // const cardChanceWinning = getCardsChanceWinning(
+        //   card,
+        //   hand,
+        //   talon[0].suit
+        // );
         // console.log(
         //   `[${card.suit}, ${card.rank}]'s chance of winning is ${cardChanceWinning}`
         // );
