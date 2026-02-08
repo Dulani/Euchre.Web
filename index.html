@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euchre - Vanilla JS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="images/Suits/Outline/Diamonds2.png">
+    <style>
+        .card-img {
+            width: 80px;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .card-img:hover {
+            transform: translateY(-10px);
+        }
+        .table-surface {
+            background-color: #2d5a27;
+            border: 8px solid #5d4037;
+            border-radius: 50%;
+            aspect-ratio: 1 / 1;
+            max-width: 600px;
+            margin: auto;
+            position: relative;
+        }
+        .player-area {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 200px;
+        }
+        .player-north { top: -20px; left: 50%; transform: translateX(-50%); }
+        .player-south { bottom: -20px; left: 50%; transform: translateX(-50%); }
+        .player-west { left: -60px; top: 50%; transform: translateY(-50%) rotate(90deg); }
+        .player-east { right: -60px; top: 50%; transform: translateY(-50%) rotate(-90deg); }
+
+        .hand {
+            display: flex;
+            justify-content: center;
+            gap: -20px;
+        }
+        .hand .card-img {
+            margin-left: -40px;
+        }
+        .hand .card-img:first-child {
+            margin-left: 0;
+        }
+
+        .trick-area {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: grid;
+            grid-template-areas:
+                ". north ."
+                "west . east"
+                ". south .";
+            gap: 10px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Euchre</h1>
+            <div id="scoreboard" class="bg-white p-4 rounded shadow-md flex gap-8">
+                <div>
+                    <span class="font-bold text-blue-600">Team 1:</span>
+                    <span id="team1-score" class="text-2xl ml-2">0</span>
+                </div>
+                <div>
+                    <span class="font-bold text-red-600">Team 2:</span>
+                    <span id="team2-score" class="text-2xl ml-2">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="relative mt-20">
+            <div class="table-surface shadow-2xl">
+                <!-- North Player (Computer 2) -->
+                <div class="player-area player-north">
+                    <div class="font-bold text-white mb-2">Computer 2 (Partner)</div>
+                    <div class="hand">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                    </div>
+                </div>
+
+                <!-- West Player (Computer 1) -->
+                <div class="player-area player-west">
+                    <div class="font-bold text-white mb-2">Computer 1</div>
+                    <div class="hand">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                    </div>
+                </div>
+
+                <!-- East Player (Computer 3) -->
+                <div class="player-area player-east">
+                    <div class="font-bold text-white mb-2">Computer 3</div>
+                    <div class="hand">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                        <img src="images/Cards/back.svg" class="card-img w-12" alt="Card back">
+                    </div>
+                </div>
+
+                <!-- Trick / Table Area -->
+                <div class="trick-area">
+                    <div style="grid-area: north;">
+                        <img src="images/Cards/spadesQ.svg" class="card-img w-16 opacity-50" alt="Played Card">
+                    </div>
+                    <div style="grid-area: west;">
+                        <img src="images/Cards/hearts10.svg" class="card-img w-16 opacity-50" alt="Played Card">
+                    </div>
+                    <div style="grid-area: east;">
+                        <img src="images/Cards/diamondsA.svg" class="card-img w-16 opacity-50" alt="Played Card">
+                    </div>
+                    <div style="grid-area: south;">
+                        <img src="images/Cards/clubsJ.svg" class="card-img w-16" alt="Played Card">
+                    </div>
+                </div>
+
+                <!-- South Player (You) -->
+                <div class="player-area player-south">
+                    <div class="hand mb-4">
+                        <img src="images/Cards/spadesA.svg" class="card-img w-20" alt="Ace of Spades">
+                        <img src="images/Cards/spadesK.svg" class="card-img w-20" alt="King of Spades">
+                        <img src="images/Cards/heartsJ.svg" class="card-img w-20" alt="Jack of Hearts">
+                        <img src="images/Cards/clubs9.svg" class="card-img w-20" alt="9 of Clubs">
+                        <img src="images/Cards/diamonds10.svg" class="card-img w-20" alt="10 of Diamonds">
+                    </div>
+                    <div class="font-bold text-white bg-black bg-opacity-50 px-4 py-1 rounded">You</div>
+                </div>
+            </div>
+
+            <!-- Controls Area -->
+            <div id="controls" class="mt-20 flex justify-center gap-4">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow-lg transition duration-200">
+                    Order Up
+                </button>
+                <button class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded shadow-lg transition duration-200">
+                    Pass
+                </button>
+            </div>
+
+            <!-- Game Status -->
+            <div id="status" class="mt-8 text-center text-xl font-semibold text-gray-700">
+                It's your turn to decide.
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
