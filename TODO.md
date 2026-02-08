@@ -3,14 +3,14 @@
 This document outlines the steps needed to convert the static UI into a fully functional Vanilla JS Euchre game.
 
 ## 1. Game State Management
-- [ ] Define a robust state object to track:
-    - Current player turn
-    - Dealer position
-    - Hands of all players
-    - Cards on the table
-    - Current phase (Dealing, Bidding, Discarding, Playing, Scoring)
-    - Trump suit
-    - Scores and tricks taken
+- [x] Define a robust state object to track:
+    - [x] Current player turn
+    - [x] Dealer position
+    - [x] Hands of all players
+    - [x] Cards on the table
+    - [x] Current phase (Dealing, Bidding, Discarding, Playing, Scoring)
+    - [x] Trump suit
+    - [x] Scores and tricks taken
 
 ## 2. Rendering Engine
 - [ ] Create functions to dynamically render:
@@ -22,8 +22,8 @@ This document outlines the steps needed to convert the static UI into a fully fu
 
 ## 3. Game Logic
 - [ ] **Deck & Dealing**:
-    - Implement a deck of 24 cards (9, 10, J, Q, K, A of each suit).
-    - Implement shuffling and dealing 5 cards to each player.
+    - [x] Implement a deck of 24 cards (9, 10, J, Q, K, A of each suit).
+    - [x] Implement shuffling and dealing 5 cards to each player.
 - [ ] **Bidding Phase**:
     - Handle "Order Up" and "Pass" for the first round.
     - Handle "Calling Trump" for the second round.
