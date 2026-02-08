@@ -28,3 +28,7 @@ export default {
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+## Acknowledgements
+
+The beautiful SVG card images used in this project were created by [Richard Schneider](https://github.com/richardschneider) and are part of the [cardsJS](https://github.com/richardschneider/cardsJS) project. Thank you for making them available!
