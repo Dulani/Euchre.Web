@@ -1,13 +1,26 @@
 /**
  * Euchre Game - Vanilla JS Implementation
- *
- * This file will eventually contain the logic for the game.
- * Following the iterative approach, we start with a static UI and
- * will add interactivity in future steps.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Euchre game initialized');
+
+    // Sidebar Toggle Logic
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const showBtn = document.getElementById('show-sidebar');
+
+    if (toggleBtn && showBtn && sidebar) {
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.add('collapsed');
+            showBtn.classList.remove('hidden');
+        });
+
+        showBtn.addEventListener('click', () => {
+            sidebar.classList.remove('collapsed');
+            showBtn.classList.add('hidden');
+        });
+    }
 
     // Initial state placeholder
     const gameState = {
