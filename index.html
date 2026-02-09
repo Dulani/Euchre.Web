@@ -36,7 +36,6 @@
             width: 250px;
             z-index: 10;
         }
-        /* Adjusted positioning to keep text roughly where it was but now inside the larger table */
         .player-north { top: 40px; left: 50%; transform: translateX(-50%); }
         .player-south { bottom: 40px; left: 50%; transform: translateX(-50%); }
         .player-west { left: -20px; top: 50%; transform: translateY(-50%) rotate(90deg); }
@@ -45,6 +44,7 @@
         .hand {
             display: flex;
             justify-content: center;
+            min-height: 120px;
         }
         .hand .card-img {
             margin-left: -50px;
@@ -57,16 +57,18 @@
             display: grid;
             grid-template-areas:
                 ". north ."
-                "west . east"
+                "west talon east"
                 ". south .";
             gap: 15px;
+            align-items: center;
+            justify-items: center;
         }
 
         #sidebar {
             transition: margin-left 0.3s ease-in-out;
         }
         #sidebar.collapsed {
-            margin-left: -16rem; /* w-64 is 16rem */
+            margin-left: -16rem;
         }
         .main-content {
             flex: 1;
@@ -81,7 +83,6 @@
     </style>
 </head>
 <body class="bg-gray-100 h-screen overflow-hidden font-sans flex">
-    <!-- Collapsible Sidebar -->
     <aside id="sidebar" class="w-64 bg-white shadow-2xl flex flex-col z-20">
         <div class="p-6 flex-1 overflow-y-auto">
             <h1 class="text-3xl font-bold text-gray-800 mb-8">Euchre</h1>
@@ -101,18 +102,13 @@
             <div id="status-container" class="mb-8">
                 <h2 class="text-xl font-semibold border-b pb-2 mb-4">Status</h2>
                 <div id="status" class="text-gray-700 italic">
-                    It's your turn to decide.
+                    Initializing...
                 </div>
             </div>
 
             <div id="controls" class="space-y-3">
                 <h2 class="text-xl font-semibold border-b pb-2 mb-4">Controls</h2>
-                <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow transition duration-200">
-                    Order Up
-                </button>
-                <button class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded shadow transition duration-200">
-                    Pass
-                </button>
+                <!-- Dynamic buttons will be injected here -->
             </div>
         </div>
         <div class="p-4 border-t">
@@ -122,7 +118,6 @@
         </div>
     </aside>
 
-    <!-- Sidebar Toggle Button (Visible when collapsed) -->
     <button id="show-sidebar" class="fixed left-0 top-4 bg-white p-2 shadow-md rounded-r-lg z-10 hidden">
         &rarr;
     </button>
@@ -132,64 +127,36 @@
             <!-- North Player (Computer 2) -->
             <div class="player-area player-north">
                 <div class="font-bold text-white mb-2">Computer 2 (Partner)</div>
-                <div class="hand">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                </div>
+                <div id="hand-north" class="hand"></div>
             </div>
 
             <!-- West Player (Computer 1) -->
             <div class="player-area player-west">
                 <div class="font-bold text-white mb-2">Computer 1</div>
-                <div class="hand">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                </div>
+                <div id="hand-west" class="hand"></div>
             </div>
 
             <!-- East Player (Computer 3) -->
             <div class="player-area player-east">
                 <div class="font-bold text-white mb-2">Computer 3</div>
-                <div class="hand">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                    <img src="images/Cards/back.svg" class="card-img w-16" alt="Card back">
-                </div>
+                <div id="hand-east" class="hand"></div>
             </div>
 
             <!-- Trick / Table Area -->
             <div class="trick-area">
-                <div style="grid-area: north;" class="flex justify-center">
-                    <img src="images/Cards/spadesQ.svg" class="card-img w-20 opacity-75" alt="Played Card">
-                </div>
-                <div style="grid-area: west;" class="flex justify-center">
-                    <img src="images/Cards/hearts10.svg" class="card-img w-20 opacity-75" alt="Played Card">
-                </div>
-                <div style="grid-area: east;" class="flex justify-center">
-                    <img src="images/Cards/diamondsA.svg" class="card-img w-20 opacity-75" alt="Played Card">
-                </div>
-                <div style="grid-area: south;" class="flex justify-center">
-                    <img src="images/Cards/clubsJ.svg" class="card-img w-20" alt="Played Card">
-                </div>
+                <div style="grid-area: north;" id="trick-north" class="w-20 h-28 border border-white border-dashed rounded opacity-50 flex items-center justify-center"></div>
+                <div style="grid-area: west;" id="trick-west" class="w-20 h-28 border border-white border-dashed rounded opacity-50 flex items-center justify-center"></div>
+
+                <!-- Talon / Face-up Card area in the middle -->
+                <div style="grid-area: talon;" id="talon-area" class="w-20 h-28 flex items-center justify-center"></div>
+
+                <div style="grid-area: east;" id="trick-east" class="w-20 h-28 border border-white border-dashed rounded opacity-50 flex items-center justify-center"></div>
+                <div style="grid-area: south;" id="trick-south" class="w-20 h-28 border border-white border-dashed rounded opacity-50 flex items-center justify-center"></div>
             </div>
 
             <!-- South Player (You) -->
             <div class="player-area player-south">
-                <div class="hand mb-4">
-                    <img src="images/Cards/spadesA.svg" class="card-img w-24" alt="Ace of Spades">
-                    <img src="images/Cards/spadesK.svg" class="card-img w-24" alt="King of Spades">
-                    <img src="images/Cards/heartsJ.svg" class="card-img w-24" alt="Jack of Hearts">
-                    <img src="images/Cards/clubs9.svg" class="card-img w-24" alt="9 of Clubs">
-                    <img src="images/Cards/diamonds10.svg" class="card-img w-24" alt="10 of Diamonds">
-                </div>
+                <div id="hand-south" class="hand mb-4"></div>
                 <div class="font-bold text-white bg-black bg-opacity-30 px-6 py-1 rounded-full">You</div>
             </div>
         </div>
