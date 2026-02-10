@@ -1,3 +1,2 @@
-node_modules
-euchre-old.ts
-euchre.md
+# No build artifacts for Vanilla JS project
+.DS_Store

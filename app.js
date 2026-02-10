@@ -77,6 +77,7 @@ class GameState {
     }
 
     deal() {
+        logAction(`Dealer is ${this.players[this.dealerIndex].name}. Dealing...`);
         const deck = this.shuffle(this.createDeck());
         this.players.forEach(p => p.hand = []);
         for (let i = 0; i < 5; i++) {
@@ -94,8 +95,11 @@ class GameState {
 
     handleAction(action, data) {
         console.log(`Action: ${action}`, data);
+        const player = this.players[this.currentPlayerIndex];
+
         if (this.phase === PHASES.BIDDING_ROUND_1) {
             if (action === 'ORDER_UP') {
+                logAction(`${player.name} ordered up ${this.faceUpCard.rank} of ${this.faceUpCard.suit}.`);
                 this.trumpSuit = this.faceUpCard.suit;
                 this.makerIndex = this.currentPlayerIndex;
                 this.phase = PHASES.DISCARDING;
@@ -103,6 +107,7 @@ class GameState {
                 // Dealer picks up the card
                 this.players[this.dealerIndex].hand.push(this.faceUpCard);
             } else if (action === 'PASS') {
+                logAction(`${player.name} passed.`);
                 if (this.currentPlayerIndex === this.dealerIndex) {
                     this.phase = PHASES.BIDDING_ROUND_2;
                 }
@@ -110,11 +115,14 @@ class GameState {
             }
         } else if (this.phase === PHASES.BIDDING_ROUND_2) {
             if (action === 'PICK_SUIT') {
+                logAction(`${player.name} picked ${data.toUpperCase()}.`);
                 this.trumpSuit = data;
                 this.makerIndex = this.currentPlayerIndex;
                 this.startPlaying();
             } else if (action === 'PASS') {
+                logAction(`${player.name} passed.`);
                 if (this.currentPlayerIndex === this.dealerIndex) {
+                    logAction(`Everyone passed. Re-dealing...`);
                     this.dealerIndex = (this.dealerIndex + 1) % 4;
                     this.deal();
                 } else {
@@ -124,14 +132,20 @@ class GameState {
         } else if (this.phase === PHASES.DISCARDING) {
             if (action === 'DISCARD') {
                 const dealer = this.players[this.dealerIndex];
+                logAction(`${dealer.name} discarded a card.`);
                 dealer.hand.splice(data, 1);
                 this.startPlaying();
             }
         } else if (this.phase === PHASES.PLAYING) {
             if (action === 'PLAY_CARD') {
                 if (this.isValidPlay(this.currentPlayerIndex, data)) {
+                    const card = player.hand[data];
+                    logAction(`${player.name} played ${card.rank} of ${card.suit}.`);
                     this.playCard(this.currentPlayerIndex, data);
                 } else {
+                    if (player.type === 'HUMAN') {
+                        alert("Invalid play! You must follow suit if possible.");
+                    }
                     console.warn("Invalid play: Must follow suit.");
                 }
             }
@@ -178,6 +192,9 @@ class GameState {
         if (this.table.length < 4) return;
 
         const winnerIndex = this.getTrickWinner();
+        const winnerName = this.players[winnerIndex].name;
+        logAction(`${winnerName} wins the trick.`);
+
         if (winnerIndex === 0 || winnerIndex === 2) this.team1Tricks++;
         else this.team2Tricks++;
 
@@ -365,10 +382,13 @@ class Renderer {
         return `images/Cards/${card.suit}${card.rank}.svg`;
     }
 
-    createCardImage(card, flippedUp = true, sizeClass = 'w-16') {
+    createCardImage(card, flippedUp = true, sizeClass = 'w-16', isPlayable = false) {
         const img = document.createElement('img');
         img.src = this.getCardImagePath(card, flippedUp);
         img.className = `card-img ${sizeClass}`;
+        if (isPlayable) {
+            img.classList.add('cursor-pointer', 'ring-2', 'ring-yellow-400', 'hover:scale-110');
+        }
         img.alt = flippedUp ? `${card.rank} of ${card.suit}` : 'Card Back';
         return img;
     }
@@ -392,9 +412,17 @@ class Renderer {
             const sizeClass = isHuman ? 'w-24' : 'w-16';
 
             player.hand.forEach((card, cardIndex) => {
-                const cardImg = this.createCardImage(card, isHuman, sizeClass);
+                let isPlayable = false;
                 if (isHuman) {
-                    cardImg.classList.add('cursor-pointer');
+                    if (this.game.phase === PHASES.DISCARDING && this.game.dealerIndex === 3) {
+                        isPlayable = true;
+                    } else if (this.game.phase === PHASES.PLAYING && this.game.currentPlayerIndex === 3) {
+                        isPlayable = this.game.isValidPlay(3, cardIndex);
+                    }
+                }
+
+                const cardImg = this.createCardImage(card, isHuman, sizeClass, isPlayable);
+                if (isHuman) {
                     cardImg.onclick = () => {
                         if (this.game.phase === PHASES.DISCARDING && this.game.dealerIndex === 3) {
                             handleUserAction('DISCARD', cardIndex);
@@ -565,6 +593,16 @@ let game;
 let renderer;
 let aiTimeout = null;
 
+function logAction(message) {
+    const logEl = document.getElementById('game-log');
+    if (!logEl) return;
+    const entry = document.createElement('div');
+    entry.className = "border-b border-gray-100 pb-1";
+    entry.textContent = `> ${message}`;
+    logEl.appendChild(entry);
+    logEl.scrollTop = logEl.scrollHeight;
+}
+
 async function handleUserAction(action, data) {
     game.handleAction(action, data);
     renderer.render();
@@ -617,6 +655,20 @@ document.addEventListener('DOMContentLoaded', () => {
         showBtn.addEventListener('click', () => {
             sidebar.classList.remove('collapsed');
             showBtn.classList.add('hidden');
+        });
+    }
+
+    const resetBtn = document.getElementById('reset-game-btn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (confirm("Are you sure you want to reset the game? Current progress will be lost.")) {
+                const logEl = document.getElementById('game-log');
+                if (logEl) logEl.innerHTML = '<div>Game Reset.</div>';
+                game.reset();
+                game.deal();
+                renderer.render();
+                checkAITurn();
+            }
         });
     }
 });

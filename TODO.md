@@ -17,15 +17,20 @@
     - [x] Dynamic hand rendering
     - [x] Dynamic status and score updates
     - [x] Dynamic control buttons
-- [ ] Interactivity & Game Flow
-    - [ ] Handle Bidding Round 1 (Order Up / Pass)
-    - [ ] AI bidding logic (basic)
-    - [ ] Handle Bidding Round 2 (Pick Suit / Pass)
-    - [ ] Discard phase (if dealer)
-    - [ ] Trick playing logic
-    - [ ] Scoring logic
-- [ ] Refinement
+- [x] Interactivity & Game Flow
+    - [x] Handle Bidding Round 1 (Order Up / Pass)
+    - [x] AI bidding logic (basic)
+    - [x] Handle Bidding Round 2 (Pick Suit / Pass)
+    - [x] Discard phase (if dealer)
+    - [x] Trick playing logic
+    - [x] Scoring logic
+- [x] Refinement
+    - [x] New Game button
+    - [x] Game Log for better visibility
+    - [x] Credits and Attribution
+    - [x] Mobile responsiveness tweaks
+    - [x] Highlights for playable cards
+- [ ] Future Improvements (Optional)
     - [ ] Animations for card movements
-    - [ ] Sound effects (optional)
-    - [ ] Improved AI
-    - [ ] Mobile responsiveness tweaks
+    - [ ] Sound effects
+    - [ ] Advanced AI
