@@ -37,10 +37,10 @@ class GameState {
     reset() {
         this.phase = PHASES.DEALING;
         this.players = [
-            { name: 'Computer 1', type: 'AI', hand: [] }, // West (Index 0)
-            { name: 'Computer 2', type: 'AI', hand: [] }, // North (Index 1) - Partner
-            { name: 'Computer 3', type: 'AI', hand: [] }, // East (Index 2)
-            { name: 'You', type: 'HUMAN', hand: [] }      // South (Index 3)
+            { name: 'Computer 1', type: 'AI', hand: [], tricks: 0 }, // West (Index 0)
+            { name: 'Computer 2', type: 'AI', hand: [], tricks: 0 }, // North (Index 1) - Partner
+            { name: 'Computer 3', type: 'AI', hand: [], tricks: 0 }, // East (Index 2)
+            { name: 'You', type: 'HUMAN', hand: [], tricks: 0 }      // South (Index 3)
         ];
         this.dealerIndex = Math.floor(Math.random() * 4);
         this.currentPlayerIndex = (this.dealerIndex + 1) % 4;
@@ -173,6 +173,7 @@ class GameState {
         this.currentPlayerIndex = (this.dealerIndex + 1) % 4;
         this.team1Tricks = 0;
         this.team2Tricks = 0;
+        this.players.forEach(p => p.tricks = 0);
         this.table = [];
     }
 
@@ -195,6 +196,7 @@ class GameState {
         const winnerName = this.players[winnerIndex].name;
         logAction(`${winnerName} wins the trick.`);
 
+        this.players[winnerIndex].tricks++;
         if (winnerIndex === 0 || winnerIndex === 2) this.team1Tricks++;
         else this.team2Tricks++;
 
@@ -370,6 +372,12 @@ class Renderer {
             2: document.getElementById('trick-east'),
             3: document.getElementById('trick-south')
         };
+        this.nameElements = {
+            0: document.getElementById('name-west'),
+            1: document.getElementById('name-north'),
+            2: document.getElementById('name-east'),
+            3: document.getElementById('name-south')
+        };
         this.talonArea = document.getElementById('talon-area');
         this.statusEl = document.getElementById('status');
         this.team1ScoreEl = document.getElementById('team1-score');
@@ -400,6 +408,7 @@ class Renderer {
         this.renderScore();
         this.renderStatus();
         this.renderControls();
+        this.renderNames();
     }
 
     renderHands() {
@@ -441,10 +450,15 @@ class Renderer {
             if (slot) slot.innerHTML = '';
         });
 
-        this.game.table.forEach(play => {
+        const table = this.game.table;
+        table.forEach((play, index) => {
             const slot = this.trickSlots[play.playerIndex];
             if (slot) {
                 const cardImg = this.createCardImage(play.card, true, 'w-20');
+                // Only animate the most recently played card
+                if (index === table.length - 1) {
+                    cardImg.classList.add('trick-card-animate');
+                }
                 slot.appendChild(cardImg);
             }
         });
@@ -521,6 +535,18 @@ class Renderer {
             trumpDisplay.innerHTML = `Trump: <img src="images/Suits/${this.game.trumpSuit.charAt(0).toUpperCase() + this.game.trumpSuit.slice(1)}.png" class="w-4 h-4 mx-1"> ${this.game.trumpSuit.toUpperCase()}`;
             this.statusEl.appendChild(trumpDisplay);
         }
+    }
+
+    renderNames() {
+        this.game.players.forEach((player, index) => {
+            const el = this.nameElements[index];
+            if (!el) return;
+
+            const dealerSymbol = index === this.game.dealerIndex ? '▲ ' : '';
+            const trickSymbols = ' ■'.repeat(player.tricks || 0);
+            const partnerSuffix = index === 1 ? ' (Partner)' : '';
+            el.textContent = `${dealerSymbol}${player.name}${partnerSuffix}${trickSymbols}`;
+        });
     }
 
     renderControls() {
@@ -618,7 +644,7 @@ async function checkAITurn() {
             renderer.render();
             aiTimeout = null;
             checkAITurn();
-        }, 1500);
+        }, 2000);
         return;
     }
 
@@ -629,7 +655,7 @@ async function checkAITurn() {
             renderer.render();
             aiTimeout = null;
             checkAITurn();
-        }, 1000);
+        }, 1500);
     }
 }
 

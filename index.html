@@ -80,6 +80,19 @@
             align-items: center;
             justify-content: center;
         }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .trick-card-animate {
+            animation: slideIn 0.3s ease-out;
+        }
     </style>
 </head>
 <body class="bg-gray-100 h-screen overflow-hidden font-sans flex">
@@ -124,7 +137,7 @@
         </div>
         <div class="p-4 border-t">
             <div class="mb-4 text-[10px] text-gray-400 leading-tight">
-                <p>Original Game by <a href="https://github.com/dulani/Euchre.Web" class="underline hover:text-gray-600" target="_blank">dulani</a></p>
+                <p>Original Game by <a href="https://github.com/jasminealmassri/Euchre.Web" class="underline hover:text-gray-600" target="_blank">Jasmine Al Massri</a></p>
                 <p class="mt-1">Card SVGs from <a href="https://github.com/htdebeer/SVG-cards" class="underline hover:text-gray-600" target="_blank">SVG-cards</a></p>
             </div>
             <button id="toggle-sidebar" class="w-full text-gray-500 hover:text-gray-700 font-medium py-2 text-sm">
@@ -141,19 +154,19 @@
         <div class="table-surface shadow-2xl">
             <!-- North Player (Computer 2) -->
             <div class="player-area player-north">
-                <div class="font-bold text-white mb-2">Computer 2 (Partner)</div>
+                <div id="name-north" class="font-bold text-white mb-2">Computer 2 (Partner)</div>
                 <div id="hand-north" class="hand"></div>
             </div>
 
             <!-- West Player (Computer 1) -->
             <div class="player-area player-west">
-                <div class="font-bold text-white mb-2">Computer 1</div>
+                <div id="name-west" class="font-bold text-white mb-2">Computer 1</div>
                 <div id="hand-west" class="hand"></div>
             </div>
 
             <!-- East Player (Computer 3) -->
             <div class="player-area player-east">
-                <div class="font-bold text-white mb-2">Computer 3</div>
+                <div id="name-east" class="font-bold text-white mb-2">Computer 3</div>
                 <div id="hand-east" class="hand"></div>
             </div>
 
@@ -172,7 +185,7 @@
             <!-- South Player (You) -->
             <div class="player-area player-south">
                 <div id="hand-south" class="hand mb-4"></div>
-                <div class="font-bold text-white bg-black bg-opacity-30 px-6 py-1 rounded-full">You</div>
+                <div id="name-south" class="font-bold text-white bg-black bg-opacity-30 px-6 py-1 rounded-full">You</div>
             </div>
         </div>
     </main>
