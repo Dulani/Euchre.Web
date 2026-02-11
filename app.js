@@ -79,7 +79,10 @@ class GameState {
     deal() {
         logAction(`Dealer is ${this.players[this.dealerIndex].name}. Dealing...`);
         const deck = this.shuffle(this.createDeck());
-        this.players.forEach(p => p.hand = []);
+        this.players.forEach(p => {
+            p.hand = [];
+            p.tricks = 0;
+        });
         for (let i = 0; i < 5; i++) {
             for (let p = 0; p < 4; p++) {
                 this.players[p].hand.push(deck.pop());
