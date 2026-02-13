@@ -548,15 +548,28 @@ class Renderer {
 
             const dealerSymbol = index === this.game.dealerIndex ? '▲ ' : '';
             const trickSymbols = ' ■'.repeat(player.tricks || 0);
-            const partnerSuffix = index === 1 ? ' (Partner)' : '';
+            const partnerSuffix = (index === 1) ? ' (Partner)' : '';
 
-            let trumpIcon = '';
+            // Clear element and rebuild safely
+            el.textContent = '';
+
             if (this.game.trumpSuit && index === this.game.makerIndex) {
                 const suitName = this.game.trumpSuit.charAt(0).toUpperCase() + this.game.trumpSuit.slice(1);
-                trumpIcon = `<img src="images/Suits/${suitName}.png" class="w-4 h-4 inline-block mr-1">`;
+                const img = document.createElement('img');
+                img.src = `images/Suits/${suitName}.png`;
+                img.className = "w-4 h-4 inline-block mr-1";
+                el.appendChild(img);
             }
 
-            el.innerHTML = `${trumpIcon}${dealerSymbol}${player.name}${partnerSuffix}${trickSymbols}`;
+            const nameText = document.createTextNode(`${dealerSymbol}${player.name}${partnerSuffix}${trickSymbols}`);
+            el.appendChild(nameText);
+
+            // Highlight current player
+            if (index === this.game.currentPlayerIndex) {
+                el.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-75');
+            } else {
+                el.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-75');
+            }
         });
     }
 
