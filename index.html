@@ -60,6 +60,32 @@
                 margin-left: -60px;
             }
         }
+        @media (max-width: 640px) {
+            .table-surface {
+                width: 94vmin;
+            }
+            .player-north { top: -2%; }
+            .player-south { bottom: -2%; }
+            .player-west { left: -8%; }
+            .player-east { right: -8%; }
+            .trick-area { inset: 28%; }
+            .hand .card-img {
+                width: 11vmin;
+                margin-left: -6vmin;
+            }
+            .player-area div[id^="name-"] {
+                font-size: 0.75rem;
+                padding: 1px 6px;
+            }
+            #bidding-controls button {
+                padding: 2px 6px;
+                font-size: 0.75rem;
+            }
+            .player-south .hand.mb-4, .player-south .hand.mt-4 {
+                margin-bottom: 0.25rem;
+                margin-top: 0.25rem;
+            }
+        }
         .hand .card-img:first-child {
             margin-left: 0;
         }
@@ -163,7 +189,7 @@
     <aside id="sidebar" class="flex flex-col">
         <div class="p-8 flex-1 overflow-y-auto">
             <div class="flex justify-between items-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-800" title="0.0.12">Euchre</h1>
+                <h1 class="text-3xl font-bold text-gray-800" title="0.0.13">Euchre</h1>
                 <button id="close-sidebar" class="text-gray-400 hover:text-gray-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -223,19 +249,19 @@
         <div class="table-surface shadow-2xl">
             <!-- North Player (Computer 2) -->
             <div class="player-area player-north">
-                <div id="name-north" class="font-bold text-white bg-black bg-opacity-50 px-4 py-1 rounded-full mb-2">Computer 2 (Partner)</div>
-                <div id="hand-north" class="hand"></div>
+                <div id="hand-north" class="hand mb-2"></div>
+                <div id="name-north" class="font-bold text-white bg-black bg-opacity-50 px-4 py-1 rounded-full whitespace-nowrap">Computer 2 (Partner)</div>
             </div>
 
             <!-- West Player (Computer 1) -->
             <div class="player-area player-west">
-                <div id="name-west" class="font-bold text-white bg-blue-900 bg-opacity-50 px-4 py-1 rounded-full mb-2">Computer 1</div>
+                <div id="name-west" class="font-bold text-white bg-blue-900 bg-opacity-50 px-4 py-1 rounded-full mb-2 whitespace-nowrap">Computer 1</div>
                 <div id="hand-west" class="hand"></div>
             </div>
 
             <!-- East Player (Computer 3) -->
             <div class="player-area player-east">
-                <div id="name-east" class="font-bold text-white bg-blue-900 bg-opacity-50 px-4 py-1 rounded-full mb-2">Computer 3</div>
+                <div id="name-east" class="font-bold text-white bg-blue-900 bg-opacity-50 px-4 py-1 rounded-full mb-2 whitespace-nowrap">Computer 3</div>
                 <div id="hand-east" class="hand"></div>
             </div>
 
@@ -253,9 +279,9 @@
 
             <!-- South Player (You) -->
             <div class="player-area player-south">
-                <div id="hand-south" class="hand mb-4"></div>
-                <div id="name-south" class="font-bold text-white bg-black bg-opacity-50 px-4 py-1 rounded-full">You</div>
-                <div id="bidding-controls" class="mt-2 flex flex-wrap justify-center gap-2"></div>
+                <div id="bidding-controls" class="mb-2 flex flex-wrap justify-center gap-2"></div>
+                <div id="name-south" class="font-bold text-white bg-black bg-opacity-50 px-4 py-1 rounded-full whitespace-nowrap">You</div>
+                <div id="hand-south" class="hand mt-4"></div>
             </div>
         </div>
     </main>
