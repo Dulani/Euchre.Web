@@ -549,7 +549,14 @@ class Renderer {
             const dealerSymbol = index === this.game.dealerIndex ? '▲ ' : '';
             const trickSymbols = ' ■'.repeat(player.tricks || 0);
             const partnerSuffix = index === 1 ? ' (Partner)' : '';
-            el.textContent = `${dealerSymbol}${player.name}${partnerSuffix}${trickSymbols}`;
+
+            let trumpIcon = '';
+            if (this.game.trumpSuit && index === this.game.makerIndex) {
+                const suitName = this.game.trumpSuit.charAt(0).toUpperCase() + this.game.trumpSuit.slice(1);
+                trumpIcon = `<img src="images/Suits/${suitName}.png" class="w-4 h-4 inline-block mr-1">`;
+            }
+
+            el.innerHTML = `${trumpIcon}${dealerSymbol}${player.name}${partnerSuffix}${trickSymbols}`;
         });
     }
 
@@ -558,16 +565,6 @@ class Renderer {
         if (this.biddingControlsEl) this.biddingControlsEl.innerHTML = '';
 
         if (this.game.phase === PHASES.SCORING) {
-            if (!this.controlsEl) return;
-            const nextBtn = document.createElement('button');
-            nextBtn.className = "w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded shadow mb-2";
-            nextBtn.textContent = "Next Hand";
-            nextBtn.onclick = () => {
-                this.game.resolveHand();
-                this.render();
-                checkAITurn();
-            };
-            this.controlsEl.appendChild(nextBtn);
             return;
         }
 
@@ -652,6 +649,16 @@ async function checkAITurn() {
             aiTimeout = null;
             checkAITurn();
         }, 2000);
+        return;
+    }
+
+    if (game.phase === PHASES.SCORING) {
+        aiTimeout = setTimeout(() => {
+            game.resolveHand();
+            renderer.render();
+            aiTimeout = null;
+            checkAITurn();
+        }, 4000);
         return;
     }
 
